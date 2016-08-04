@@ -9,14 +9,7 @@ import 'markdown_style_raw.dart';
 
 typedef void MarkdownLinkCallback(String href);
 
-
-/// A [Widget] that renders markdown formatted text. It supports all standard
-/// markdowns from the original markdown specification found here:
-/// https://daringfireball.net/projects/markdown/ The rendered markdown is
-/// placed in a padded scrolling view port. If you do not want the scrolling
-/// behaviour, use the [MarkdownBodyRaw] class instead.
-class MarkdownRaw extends StatelessWidget {
-
+class MarkdownRaw extends MarkdownBase<MarkdownStyleRaw> {
   /// Creates a new Markdown [Widget] that renders the markdown formatted string
   /// passed in as [data]. By default the markdown will be rendered using the
   /// styles from the current theme, but you can optionally pass in a custom
@@ -26,6 +19,26 @@ class MarkdownRaw extends StatelessWidget {
   ///
   ///     new MarkdownRaw(data: "Hello _world_!", markdownStyle: myStyle);
   MarkdownRaw({
+    String data,
+    MarkdownStyleRaw markdownStyle,
+    SyntaxHighlighter syntaxHighlighter,
+    EdgeInsets padding: const EdgeInsets.all(16.0),
+    MarkdownLinkCallback onTapLink
+  }) : super(
+    data: data,
+    markdownStyle: markdownStyle,
+    syntaxHighlighter: syntaxHighlighter,
+    padding: padding,
+    onTapLink: onTapLink);
+}
+
+/// A [Widget] that renders markdown formatted text. It supports all standard
+/// markdowns from the original markdown specification found here:
+/// https://daringfireball.net/projects/markdown/ The rendered markdown is
+/// placed in a padded scrolling view port. If you do not want the scrolling
+/// behaviour, use the [MarkdownBodyRaw] class instead.
+class MarkdownBase<T extends MarkdownStyleRaw> extends StatelessWidget {
+  MarkdownBase({
     this.data,
     this.markdownStyle,
     this.syntaxHighlighter,
@@ -37,7 +50,7 @@ class MarkdownRaw extends StatelessWidget {
   final String data;
 
   /// Style used for rendering the markdown
-  final MarkdownStyleRaw markdownStyle;
+  final T markdownStyle;
 
   /// The syntax highlighter used to color text in code blocks
   final SyntaxHighlighter syntaxHighlighter;
@@ -65,7 +78,7 @@ class MarkdownRaw extends StatelessWidget {
 
   MarkdownBodyRaw createMarkdownBody({
     String data,
-    MarkdownStyleRaw markdownStyle,
+    T markdownStyle,
     SyntaxHighlighter syntaxHighlighter,
     MarkdownLinkCallback onTapLink
   }) {

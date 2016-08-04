@@ -12,7 +12,7 @@ import 'markdown_style.dart';
 /// https://daringfireball.net/projects/markdown/ The rendered markdown is
 /// placed in a padded scrolling view port. If you do not want the scrolling
 /// behaviour, use the [MarkdownBody] class instead.
-class Markdown extends MarkdownRaw {
+class Markdown extends MarkdownBase<MarkdownStyle> {
 
   /// Creates a new Markdown [Widget] that renders the markdown formatted string
   /// passed in as [data]. By default the markdown will be rendered using the
