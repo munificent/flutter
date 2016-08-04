@@ -34,8 +34,6 @@ Element.update ((Widget) → void) overridden by _ProxyElement.update ((_ProxyWi
 Element.update ((Widget) → void) overridden by RenderObjectElement.update ((RenderObjectWidget) → void) (packages/flutter/lib/src/widgets/framework.dart, line 2339, col 3)
 Element.update ((Widget) → void) overridden by StatefulElement.update ((StatefulWidget) → void) (packages/flutter/lib/src/widgets/framework.dart, line 2090, col 3)
 Element.update ((Widget) → void) overridden by StatelessElement.update ((StatelessWidget) → void) (packages/flutter/lib/src/widgets/framework.dart, line 2029, col 3)
-EquationMember.* ((EquationMember) → Expression) overridden by Expression.* ((EquationMember) → EquationMember) (packages/flutter/lib/src/cassowary/expression.dart, line 151, col 3)
-EquationMember./ ((EquationMember) → Expression) overridden by Expression./ ((EquationMember) → EquationMember) (packages/flutter/lib/src/cassowary/expression.dart, line 165, col 3)
 FlowDelegate.shouldRepaint ((FlowDelegate) → bool) overridden by TestFlowDelegate.shouldRepaint ((TestFlowDelegate) → bool) (packages/flutter/test/widget/flow_test.dart, line 30, col 3)
 Future<T>.timeout ((Duration, {onTimeout: () → dynamic}) → Future<T>) overridden by SynchronousFuture.timeout ((Duration, {onTimeout: () → Future<T>}) → Future<T>) (packages/flutter/lib/src/foundation/synchronous_future.dart, line 45, col 3)
 Future<T>.whenComplete ((() → dynamic) → Future<T>) overridden by SynchronousFuture.whenComplete ((() → Future<T>) → Future<T>) (packages/flutter/lib/src/foundation/synchronous_future.dart, line 48, col 3)
