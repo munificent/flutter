@@ -95,7 +95,7 @@ class NetworkAssetBundle extends AssetBundle {
   /// The result is not cached. The parser is run each time the resource is
   /// fetched.
   @override
-  Future<dynamic> loadStructuredData(String key, Future<dynamic> parser(String value)) async {
+  Future<dynamic> loadStructuredData(String key, dynamic parser(String value)) async {
     assert(key != null);
     assert(parser != null);
     return parser(await loadString(key));
@@ -142,7 +142,7 @@ abstract class CachingAssetBundle extends AssetBundle {
   /// subsequent calls will be a [SynchronousFuture], which resolves its
   /// callback synchronously.
   @override
-  Future<dynamic> loadStructuredData(String key, Future<dynamic> parser(String value)) {
+  Future<dynamic> loadStructuredData(String key, dynamic parser(String value)) {
     assert(key != null);
     assert(parser != null);
     if (_structuredDataCache.containsKey(key))
