@@ -64,8 +64,12 @@ class _FindsWidgetMatcher extends Matcher {
   final int max;
 
   @override
-  bool matches(Finder finder, Map<dynamic, dynamic> matchState) {
+  bool matches(Object object, Map<dynamic, dynamic> matchState) {
     assert(min != null || max != null);
+
+    if (object is! Finder) return false;
+    Finder finder = object;
+
     matchState[Finder] = finder;
     if (min != null) {
       int count = 0;
@@ -136,7 +140,10 @@ class _FindsWidgetMatcher extends Matcher {
   }
 }
 
-bool _hasAncestorMatching(Finder finder, bool predicate(Widget widget)) {
+bool _hasAncestorMatching(Object object, bool predicate(Widget widget)) {
+  if (object is! Finder) return false;
+  Finder finder = object;
+
   expect(finder, findsOneWidget);
   bool result = false;
   finder.evaluate().single.visitAncestorElements((Element ancestor) {
@@ -149,16 +156,16 @@ bool _hasAncestorMatching(Finder finder, bool predicate(Widget widget)) {
   return result;
 }
 
-bool _hasAncestorOfType(Finder finder, Type targetType) {
-  return _hasAncestorMatching(finder, (Widget widget) => widget.runtimeType == targetType);
+bool _hasAncestorOfType(Object object, Type targetType) {
+  return _hasAncestorMatching(object, (Widget widget) => widget.runtimeType == targetType);
 }
 
 class _IsOffStage extends Matcher {
   const _IsOffStage();
 
   @override
-  bool matches(Finder finder, Map<dynamic, dynamic> matchState) {
-    return _hasAncestorMatching(finder, (Widget widget) {
+  bool matches(Object object, Map<dynamic, dynamic> matchState) {
+    return _hasAncestorMatching(object, (Widget widget) {
       if (widget.runtimeType != OffStage)
         return false;
       OffStage offstage = widget;
@@ -174,7 +181,10 @@ class _IsOnStage extends Matcher {
   const _IsOnStage();
 
   @override
-  bool matches(Finder finder, Map<dynamic, dynamic> matchState) {
+  bool matches(Object object, Map<dynamic, dynamic> matchState) {
+    if (object is! Finder) return false;
+    Finder finder = object;
+
     expect(finder, findsOneWidget);
     bool result = true;
     finder.evaluate().single.visitAncestorElements((Element ancestor) {
@@ -197,7 +207,7 @@ class _IsInCard extends Matcher {
   const _IsInCard();
 
   @override
-  bool matches(Finder finder, Map<dynamic, dynamic> matchState) => _hasAncestorOfType(finder, Card);
+  bool matches(Object object, Map<dynamic, dynamic> matchState) => _hasAncestorOfType(object, Card);
 
   @override
   Description describe(Description description) => description.add('in card');
@@ -207,7 +217,7 @@ class _IsNotInCard extends Matcher {
   const _IsNotInCard();
 
   @override
-  bool matches(Finder finder, Map<dynamic, dynamic> matchState) => !_hasAncestorOfType(finder, Card);
+  bool matches(Object object, Map<dynamic, dynamic> matchState) => !_hasAncestorOfType(object, Card);
 
   @override
   Description describe(Description description) => description.add('not in card');
