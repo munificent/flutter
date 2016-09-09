@@ -688,32 +688,28 @@ class ScrollableState<T extends Scrollable> extends State<T> {
   /// applicable to this [Scrollable] in its current state.
   ///
   /// This is called by [build] and [updateGestureDetector].
-  Map<Type, GestureRecognizerFactory> buildGestureDetectors() {
+  GestureRecognizerFactoryMap buildGestureDetectors() {
     if (scrollBehavior.isScrollable) {
       switch (config.scrollDirection) {
         case Axis.vertical:
-          return <Type, GestureRecognizerFactory>{
-            VerticalDragGestureRecognizer: (VerticalDragGestureRecognizer recognizer) {
-              return (recognizer ??= new VerticalDragGestureRecognizer())
-                ..onDown = _handleDragDown
-                ..onStart = _handleDragStart
-                ..onUpdate = _handleDragUpdate
-                ..onEnd = _handleDragEnd;
-            }
-          };
+          return new GestureRecognizerFactoryMap()..add((VerticalDragGestureRecognizer recognizer) {
+            return (recognizer ??= new VerticalDragGestureRecognizer())
+              ..onDown = _handleDragDown
+              ..onStart = _handleDragStart
+              ..onUpdate = _handleDragUpdate
+              ..onEnd = _handleDragEnd;
+          });
         case Axis.horizontal:
-          return <Type, GestureRecognizerFactory>{
-            HorizontalDragGestureRecognizer: (HorizontalDragGestureRecognizer recognizer) {
-              return (recognizer ??= new HorizontalDragGestureRecognizer())
-                ..onDown = _handleDragDown
-                ..onStart = _handleDragStart
-                ..onUpdate = _handleDragUpdate
-                ..onEnd = _handleDragEnd;
-            }
-          };
+          return new GestureRecognizerFactoryMap()..add((HorizontalDragGestureRecognizer recognizer) {
+            return (recognizer ??= new HorizontalDragGestureRecognizer())
+              ..onDown = _handleDragDown
+              ..onStart = _handleDragStart
+              ..onUpdate = _handleDragUpdate
+              ..onEnd = _handleDragEnd;
+          });
       }
     }
-    return const <Type, GestureRecognizerFactory>{};
+    return const GestureRecognizerFactoryMap.empty();
   }
 
   /// Calls the widget's [builder] by default.

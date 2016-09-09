@@ -36,6 +36,49 @@ export 'package:flutter/gestures.dart' show
 /// the slot for which a gesture recognizer is being created.
 typedef GestureRecognizer GestureRecognizerFactory(GestureRecognizer recognizer);
 
+/// A collection of [GestureRecognizerFactory] objects keyed by the type of
+/// gesture each factory creates.
+class GestureRecognizerFactoryMap {
+  factory GestureRecognizerFactoryMap() = _MutableGestureRecognizerFactoryMap;
+
+  const GestureRecognizerFactoryMap.empty();
+
+  /// Gets the [GestureRecognizerFactory] for [type].
+  GestureRecognizerFactory operator [](Type type) => null;
+
+  /// Adds a new factory to the map that creates gestures of type [T].
+  void add/*<T extends GestureRecognizer>*/(dynamic/*=T*/ factory(dynamic/*=T*/ recognizer)) {
+    throw new UnsupportedError("Cannot modify a constant GestureRecognizerSet.");
+  }
+
+  Iterable<Type> get keys => const <Type>[];
+
+  bool containsKey(Type type) => false;
+}
+
+class _MutableGestureRecognizerFactoryMap implements GestureRecognizerFactoryMap {
+  final Map<Type, GestureRecognizerFactory> _factories = <Type, GestureRecognizerFactory>{};
+
+  /// Gets the [GestureRecognizerFactory] for [type].
+  @override
+  GestureRecognizerFactory operator [](Type type) => _factories[type];
+
+  /// Adds a new factory to the map that creates gestures of type [T].
+  @override
+  void add/*<T extends GestureRecognizer>*/(dynamic/*=T*/ factory(dynamic/*=T*/ recognizer)) {
+    _factories[T] = (GestureRecognizer recognizer) {
+      T typed = recognizer;
+      factory(typed);
+    };
+  }
+
+  @override
+  Iterable<Type> get keys => _factories.keys;
+
+  @override
+  bool containsKey(Type type) => _factories.containsKey(type);
+}
+
 /// A widget that detects gestures.
 ///
 /// Attempts to recognize gestures that correspond to its non-null callbacks.
@@ -220,30 +263,30 @@ class GestureDetector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<Type, GestureRecognizerFactory> gestures = <Type, GestureRecognizerFactory>{};
+    GestureRecognizerFactoryMap gestures = new GestureRecognizerFactoryMap();
 
     if (onTapDown != null || onTapUp != null || onTap != null || onTapCancel != null) {
-      gestures[TapGestureRecognizer] = (TapGestureRecognizer recognizer) {
+      gestures.add((TapGestureRecognizer recognizer) {
         return (recognizer ??= new TapGestureRecognizer())
           ..onTapDown = onTapDown
           ..onTapUp = onTapUp
           ..onTap = onTap
           ..onTapCancel = onTapCancel;
-      };
+      });
     }
 
     if (onDoubleTap != null) {
-      gestures[DoubleTapGestureRecognizer] = (DoubleTapGestureRecognizer recognizer) {
+        gestures.add((DoubleTapGestureRecognizer recognizer) {
         return (recognizer ??= new DoubleTapGestureRecognizer())
           ..onDoubleTap = onDoubleTap;
-      };
+      });
     }
 
     if (onLongPress != null) {
-      gestures[LongPressGestureRecognizer] = (LongPressGestureRecognizer recognizer) {
+      gestures.add((LongPressGestureRecognizer recognizer) {
         return (recognizer ??= new LongPressGestureRecognizer())
           ..onLongPress = onLongPress;
-      };
+      });
     }
 
     if (onVerticalDragDown != null ||
@@ -251,14 +294,14 @@ class GestureDetector extends StatelessWidget {
         onVerticalDragUpdate != null ||
         onVerticalDragEnd != null ||
         onVerticalDragCancel != null) {
-      gestures[VerticalDragGestureRecognizer] = (VerticalDragGestureRecognizer recognizer) {
+      gestures.add((VerticalDragGestureRecognizer recognizer) {
         return (recognizer ??= new VerticalDragGestureRecognizer())
           ..onDown = onVerticalDragDown
           ..onStart = onVerticalDragStart
           ..onUpdate = onVerticalDragUpdate
           ..onEnd = onVerticalDragEnd
           ..onCancel = onVerticalDragCancel;
-      };
+      });
     }
 
     if (onHorizontalDragDown != null ||
@@ -266,14 +309,14 @@ class GestureDetector extends StatelessWidget {
         onHorizontalDragUpdate != null ||
         onHorizontalDragEnd != null ||
         onHorizontalDragCancel != null) {
-      gestures[HorizontalDragGestureRecognizer] = (HorizontalDragGestureRecognizer recognizer) {
+      gestures.add((HorizontalDragGestureRecognizer recognizer) {
         return (recognizer ??= new HorizontalDragGestureRecognizer())
           ..onDown = onHorizontalDragDown
           ..onStart = onHorizontalDragStart
           ..onUpdate = onHorizontalDragUpdate
           ..onEnd = onHorizontalDragEnd
           ..onCancel = onHorizontalDragCancel;
-      };
+      });
     }
 
     if (onPanDown != null ||
@@ -281,23 +324,23 @@ class GestureDetector extends StatelessWidget {
         onPanUpdate != null ||
         onPanEnd != null ||
         onPanCancel != null) {
-      gestures[PanGestureRecognizer] = (PanGestureRecognizer recognizer) {
+      gestures.add((PanGestureRecognizer recognizer) {
         return (recognizer ??= new PanGestureRecognizer())
           ..onDown = onPanDown
           ..onStart = onPanStart
           ..onUpdate = onPanUpdate
           ..onEnd = onPanEnd
           ..onCancel = onPanCancel;
-      };
+      });
     }
 
     if (onScaleStart != null || onScaleUpdate != null || onScaleEnd != null) {
-      gestures[ScaleGestureRecognizer] = (ScaleGestureRecognizer recognizer) {
+      gestures.add((ScaleGestureRecognizer recognizer) {
         return (recognizer ??= new ScaleGestureRecognizer())
           ..onStart = onScaleStart
           ..onUpdate = onScaleUpdate
           ..onEnd = onScaleEnd;
-      };
+      });
     }
 
     return new RawGestureDetector(
@@ -323,7 +366,7 @@ class RawGestureDetector extends StatefulWidget {
   RawGestureDetector({
     Key key,
     this.child,
-    this.gestures: const <Type, GestureRecognizerFactory>{},
+    this.gestures: const GestureRecognizerFactoryMap.empty(),
     this.behavior,
     this.excludeFromSemantics: false
   }) : super(key: key) {
@@ -335,7 +378,7 @@ class RawGestureDetector extends StatefulWidget {
   final Widget child;
 
   /// The gestures that this widget will attempt to recognize.
-  final Map<Type, GestureRecognizerFactory> gestures;
+  final GestureRecognizerFactoryMap gestures;
 
   /// How this gesture detector should behave during hit testing.
   final HitTestBehavior behavior;
@@ -375,7 +418,7 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
   /// in their gesture detector, and then need to know the dimensions
   /// of the viewport and the viewport's child to determine whether
   /// the gesture detector should be enabled.
-  void replaceGestureRecognizers(Map<Type, GestureRecognizerFactory> gestures) {
+  void replaceGestureRecognizers(GestureRecognizerFactoryMap gestures) {
     assert(() {
       // TODO kgiesing This assert will trigger if the owner of the current
       // tree is different from the owner assigned to the renderer instance.
@@ -395,7 +438,7 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
     _syncAll(gestures);
     if (!config.excludeFromSemantics) {
       RenderSemanticsGestureHandler semanticsGestureHandler = context.findRenderObject();
-      context.visitChildElements((RenderObjectElement element) {
+      context.visitChildElements((Element element) {
         _GestureSemantics widget = element.widget;
         widget._updateHandlers(semanticsGestureHandler, _recognizers);
       });
@@ -410,7 +453,7 @@ class RawGestureDetectorState extends State<RawGestureDetector> {
     super.dispose();
   }
 
-  void _syncAll(Map<Type, GestureRecognizerFactory> gestures) {
+  void _syncAll(GestureRecognizerFactoryMap gestures) {
     assert(_recognizers != null);
     Map<Type, GestureRecognizer> oldRecognizers = _recognizers;
     _recognizers = <Type, GestureRecognizer>{};
